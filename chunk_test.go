@@ -122,7 +122,8 @@ func TestEnsureBytes(t *testing.T) {
 }
 
 func testDecodeOk(t *testing.T, s string) {
-	var rows []chunkRowType
+	var rows [][]*string
+	var chunkRows []chunkRowType
 	if err := json.Unmarshal([]byte(s), &rows); err != nil {
 		t.Fatalf("test case is not valid json / [][]*string: %s", s)
 	}
@@ -134,7 +135,10 @@ func testDecodeOk(t *testing.T, s string) {
 		t.Fatalf("unreachable: %s", err)
 	}
 
-	rows, err = decodeLargeChunk(strings.NewReader(s), 0, 0)
+	chunkRows, err = decodeLargeChunk(strings.NewReader(s), 0, 0)
+	for i := range chunkRows {
+		rows[i] = chunkRows[i].RowSet
+	}
 	if err != nil {
 		t.Fatalf("expected decode to succeed: %s", err)
 	}
