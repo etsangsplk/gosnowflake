@@ -134,7 +134,10 @@ func testDecodeOk(t *testing.T, s string) {
 		t.Fatalf("unreachable: %s", err)
 	}
 
-	rows, err = decodeLargeChunk(strings.NewReader(s), 0, 0)
+	chunkRows, err = decodeLargeChunk(strings.NewReader(s), 0, 0)
+	for i := range chunkRows {
+		rows[i] = chunkRows[i].RowSet
+	}
 	if err != nil {
 		t.Fatalf("expected decode to succeed: %s", err)
 	}
