@@ -523,7 +523,7 @@ func testInt(t *testing.T, arrow bool) {
 		// SIGNED
 		for _, v := range types {
 			if arrow {
-				dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+				dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 			}
 			dbt.mustExec("CREATE TABLE test (value " + v + ")")
 			dbt.mustExec("INSERT INTO test VALUES (?)", in)
@@ -559,7 +559,7 @@ func testFloat32(t *testing.T, arrow bool) {
 		var rows *RowsExtended
 		for _, v := range types {
 			if arrow {
-				dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+				dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 			}
 			dbt.mustExec("CREATE TABLE test (value " + v + ")")
 			dbt.mustExec("INSERT INTO test VALUES (?)", in)
@@ -597,7 +597,7 @@ func testFloat64(t *testing.T, arrow bool) {
 		var rows *RowsExtended
 		for _, v := range types {
 			if arrow {
-				dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+				dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 			}
 			dbt.mustExec("CREATE TABLE test (value " + v + ")")
 			dbt.mustExec("INSERT INTO test VALUES (42.23)")
@@ -632,7 +632,7 @@ func testFloat64Placeholder(t *testing.T, arrow bool) {
 		var rows *RowsExtended
 		for _, v := range types {
 			if arrow {
-				dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+				dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 			}
 			dbt.mustExec(fmt.Sprintf("CREATE TABLE test (id int, value %v)", v))
 			dbt.mustExec("INSERT INTO test VALUES (1, ?)", expected)
@@ -667,7 +667,7 @@ func testUint64Placeholder(t *testing.T, arrow bool) {
 		expected := uint64(18446744073709551615)
 		for _, v := range types {
 			if arrow {
-				dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+				dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 			}
 			dbt.mustExec(fmt.Sprintf("CREATE TABLE test (id int, value %v)", v))
 			_, err := dbt.db.Exec("INSERT INTO test VALUES (1, ?)", expected)
@@ -693,7 +693,7 @@ func testDateTimeTimestampPlaceholder(t *testing.T, arrow bool) {
 	createDSN("America/Los_Angeles")
 	runTests(t, dsn, func(dbt *DBTest) {
 		if arrow {
-			dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+			dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		}
 		expected := time.Now()
 		dbt.mustExec(
@@ -775,7 +775,7 @@ func TestArrowBinaryPlaceholder(t *testing.T) {
 func testBinaryPlaceholder(t *testing.T, arrow bool) {
 	runTests(t, dsn, func(dbt *DBTest) {
 		if arrow {
-			dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+			dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		}
 		dbt.mustExec("CREATE OR REPLACE TABLE bintest (id int, b binary)")
 		var b = []byte{0x01, 0x02, 0x03}
@@ -834,7 +834,7 @@ func TestBindingInterface(t *testing.T) {
 
 func TestArrowBindingInterface(t *testing.T) {
 	runTests(t, dsn, func(dbt *DBTest) {
-		dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+		dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		var err error
 		rows := dbt.mustQuery(
 			"SELECT 1.0::NUMBER(30,2) as C1, 2::NUMBER(38,0) AS C2, 't3' AS C3, 4.2::DOUBLE AS C4, 'abcd'::BINARY AS C5, true AS C6")
@@ -882,7 +882,7 @@ func TestArrowVariousTypes(t *testing.T) {
 func testVariousTypes(t *testing.T, arrow bool) {
 	runTests(t, dsn, func(dbt *DBTest) {
 		if arrow {
-			dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+			dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		}
 		rows := dbt.mustQuery(
 			"SELECT 1.0::NUMBER(30,2) as C1, 2::NUMBER(38,0) AS C2, 't3' AS C3, 4.2::DOUBLE AS C4, 'abcd'::BINARY AS C5, true AS C6")
@@ -1004,7 +1004,7 @@ func TestArrowTimestampTZPlaceholder(t *testing.T) {
 func testTimestampTZPlaceholder(t *testing.T, arrow bool) {
 	runTests(t, dsn, func(dbt *DBTest) {
 		if arrow {
-			dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+			dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		}
 		expected := time.Now()
 		dbt.mustExec("CREATE OR REPLACE TABLE tztest (id int, tz timestamp_tz)")
@@ -1045,7 +1045,7 @@ func TestArrowString(t *testing.T) {
 func testString(t *testing.T, arrow bool) {
 	runTests(t, dsn, func(dbt *DBTest) {
 		if arrow {
-			dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+			dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		}
 		types := []string{"CHAR(255)", "VARCHAR(255)", "TEXT", "STRING"}
 		in := "κόσμε üöäßñóùéàâÿœ'îë Árvíztűrő いろはにほへとちりぬるを イロハニホヘト דג סקרן чащах  น่าฟังเอย"
@@ -1189,7 +1189,7 @@ func testSimpleDateTimeTimestampFetch(t *testing.T, arrow bool) {
 	}
 	runTests(t, dsn, func(dbt *DBTest) {
 		if arrow {
-			dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+			dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		}
 		for _, f := range fetchTypes {
 			rows := dbt.mustQuery("SELECT CURRENT_DATE(), CURRENT_TIME(), CURRENT_TIMESTAMP()")
@@ -1260,7 +1260,7 @@ func testDateTime(t *testing.T, arrow bool) {
 	}
 	runTests(t, dsn, func(dbt *DBTest) {
 		if arrow {
-			dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+			dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		}
 		for _, setups := range testcases {
 			for _, setup := range setups.tests {
@@ -1334,7 +1334,7 @@ func testTimestampLTZ(t *testing.T, arrow bool) {
 	}
 	runTests(t, dsn, func(dbt *DBTest) {
 		if arrow {
-			dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+			dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		}
 		for _, setups := range testcases {
 			for _, setup := range setups.tests {
@@ -1387,7 +1387,7 @@ func testTimestampTZ(t *testing.T, arrow bool) {
 	}
 	runTests(t, dsn, func(dbt *DBTest) {
 		if arrow {
-			dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+			dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		}
 		for _, setups := range testcases {
 			for _, setup := range setups.tests {
@@ -1412,7 +1412,7 @@ func TestArrowNULL(t *testing.T) {
 func testNULL(t *testing.T, arrow bool) {
 	runTests(t, dsn, func(dbt *DBTest) {
 		if arrow {
-			dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+			dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		}
 		nullStmt, err := dbt.db.Prepare("SELECT NULL")
 		if err != nil {
@@ -1575,7 +1575,7 @@ func TestArrowVariant(t *testing.T) {
 func testVariant(t *testing.T, arrow bool) {
 	runTests(t, dsn, func(dbt *DBTest) {
 		if arrow {
-			dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+			dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		}
 		rows := dbt.mustQuery(`select parse_json('[{"id":1, "name":"test1"},{"id":2, "name":"test2"}]')`)
 		defer rows.Close()
@@ -1602,7 +1602,7 @@ func TestArrowArray(t *testing.T) {
 func testArray(t *testing.T, arrow bool) {
 	runTests(t, dsn, func(dbt *DBTest) {
 		if arrow {
-			dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+			dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		}
 		rows := dbt.mustQuery(`select as_array(parse_json('[{"id":1, "name":"test1"},{"id":2, "name":"test2"}]'))`)
 		defer rows.Close()
@@ -1636,7 +1636,7 @@ func TestLargeSetResultWithArrowDecoder(t *testing.T) {
 func testLargeSetResult(t *testing.T, numrows int, arrow bool) {
 	runTests(t, dsn, func(dbt *DBTest) {
 		if arrow {
-			dbt.db.Exec("ALTER SESSION set go_query_result_format = arrow_force")
+			dbt.mustExec("ALTER SESSION set go_query_result_format = arrow_force")
 		}
 		rows := dbt.mustQuery(fmt.Sprintf("SELECT SEQ8(), RANDSTR(1000, RANDOM()) FROM TABLE(GENERATOR(ROWCOUNT=>%v))", numrows))
 		defer rows.Close()
